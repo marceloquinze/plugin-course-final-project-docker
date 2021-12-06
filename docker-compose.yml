@@ -1,0 +1,42 @@
+version: "3.9"
+    
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./db_data:/var/lib/mysql #isto é pra que os dados persistam mesmo quando se o container for reiniciado
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: wordpress 
+
+  wordpress:
+    depends_on:
+      - db # o serviço db vai rodar antes de wordpress. E wordpress vai sair depois de db
+    image: wordpress:latest
+    volumes:
+      - ./:/var/www/html # este ./ significa o diretório atual do YML, que é onde estão os arquivos do WP
+    ports:
+      - 80:80 # a primeira é a porta exposta. A segunda é a porta do servidor Apache (neste caso)
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+
+volumes:
+  db_data: {}

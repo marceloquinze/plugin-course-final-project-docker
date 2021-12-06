@@ -1,0 +1,1 @@
+/Users/marcelovieira/htdocs/plugin_dev/wp-content/plugins/query-monitor/wp-content/db.php
